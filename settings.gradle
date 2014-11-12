@@ -1,2 +1,2 @@
 rootProject.name = 'bender'
-include 'sensor-sigar'
+include 'sensor-api', 'sensor-sigar', 'sensor-sigar-influxdb', 'repository-influxdb'

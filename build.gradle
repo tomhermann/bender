@@ -1,4 +1,5 @@
 allprojects {
+	apply from: 'https://raw.githubusercontent.com/tomhermann/gradle-scripts/master/create-dirs.gradle'
     apply plugin: 'java'
     apply plugin: 'eclipse'
     apply plugin: 'idea'
@@ -9,4 +10,8 @@ allprojects {
 
     sourceCompatibility = '1.7'
     targetCompatibility = sourceCompatibility
+}
+
+dependencies {
+	compile project(':sensor-sigar-influxdb')
 }

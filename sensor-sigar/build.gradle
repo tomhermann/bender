@@ -1,0 +1,6 @@
+dependencies {
+    compile 'org.fusesource:sigar:1.6.4'
+	compile project(':sensor-api')
+            
+    testCompile('junit:junit:4.11')
+}

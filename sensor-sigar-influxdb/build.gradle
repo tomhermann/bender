@@ -1,0 +1,6 @@
+dependencies {
+	compile project(':sensor-sigar')
+	compile project(':repository-influxdb')
+            
+    testCompile('junit:junit:4.11')
+}

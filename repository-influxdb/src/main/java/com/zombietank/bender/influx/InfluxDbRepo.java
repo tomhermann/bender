@@ -6,9 +6,9 @@ import org.influxdb.dto.Serie;
 import com.zombietank.bender.api.Repository;
 
 public class InfluxDbRepo<T> implements Repository<T> {
-	private InfluxDB influxDb;
-	private String databaseName;
-	private SeriesTransformer<T> seriesTransformer;
+	private final InfluxDB influxDb;
+	private final String databaseName;
+	private final SeriesTransformer<T> seriesTransformer;
 
 	public InfluxDbRepo(String databaseName, InfluxDB influxDb, SeriesTransformer<T> seriesTransformer) {
 		this.databaseName = databaseName;

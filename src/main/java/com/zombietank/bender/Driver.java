@@ -1,5 +1,8 @@
 package com.zombietank.bender;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -15,18 +18,32 @@ import com.zombietank.bender.sigar.influxdb.SigarTransformer;
 
 public class Driver {
 
-	public void run() {
+	public static void main(String... args) throws IOException {
+		new Driver().start();
+	}
+	
+	void start() throws IOException {
 		ScheduledExecutorService newScheduledThreadPool = Executors.newScheduledThreadPool(1);
 		
-		InfluxDB influxDb = InfluxDBFactory.connect("http://zombietank.com:8086", "tom", "testing");
+		InfluxDB influxDb = createConnection(loadProperties());
 		Repository<Sigar> repository = new InfluxDbRepo<>("sigar", influxDb, new SigarTransformer());
 		
 		Runnable task = new GatherSystemDataTask(new Sigar(), repository);
 		newScheduledThreadPool.scheduleWithFixedDelay(task, 0, 1, TimeUnit.SECONDS);
 	}
-	
-	public static void main(String[] args) {
-		new Driver().run();
+
+	private InfluxDB createConnection(Properties properties) {
+		String hostname = properties.getProperty("hostname");
+		String username = properties.getProperty("username");
+		String password = properties.getProperty("password");
+		return InfluxDBFactory.connect(hostname, username, password);
 	}
 	
+	private Properties loadProperties() throws IOException {
+		Properties properties = new Properties();
+		try(InputStream inputStream = Driver.class.getResourceAsStream("/influxdb.properties")) {
+			properties.load(inputStream);
+		}
+		return properties;
+	}
 }

@@ -24,6 +24,7 @@ public class SigarTransformer implements SeriesTransformer<Sigar> {
 				toSeries(input.getSwap())
 			};
 		} catch (SigarException e) {
+			// FIXME: If this fails it should log and continue. Need to set up logging, so this will do.
 			throw new RuntimeException(e);
 		}
 	}

@@ -5,8 +5,8 @@ import org.hyperic.sigar.Sigar;
 import com.zombietank.bender.api.Repository;
 
 public class GatherSystemDataTask implements Runnable {
-	private Sigar sigar;
-	private Repository<Sigar> repository;
+	private final Sigar sigar;
+	private final Repository<Sigar> repository;
 
 	public GatherSystemDataTask(Sigar sigar, Repository<Sigar> repository) {
 		this.sigar = sigar;

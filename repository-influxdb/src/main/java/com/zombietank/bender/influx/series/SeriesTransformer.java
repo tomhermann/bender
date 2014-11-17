@@ -1,4 +1,4 @@
-package com.zombietank.bender.influx;
+package com.zombietank.bender.influx.series;
 
 import java.util.concurrent.TimeUnit;
 

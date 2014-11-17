@@ -1,4 +1,4 @@
-package com.zombietank.bender.sigar.influxdb;
+package com.zombietank.bender.influx.series;
 
 import java.util.Arrays;
 import java.util.List;

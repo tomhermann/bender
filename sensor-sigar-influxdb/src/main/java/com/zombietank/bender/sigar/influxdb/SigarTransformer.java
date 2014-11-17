@@ -1,19 +1,17 @@
 package com.zombietank.bender.sigar.influxdb;
 
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.hyperic.sigar.Cpu;
-import org.hyperic.sigar.CpuPerc;
 import org.hyperic.sigar.Mem;
 import org.hyperic.sigar.ProcStat;
 import org.hyperic.sigar.Sigar;
 import org.hyperic.sigar.SigarException;
 import org.hyperic.sigar.Swap;
 import org.influxdb.dto.Serie;
-import org.influxdb.dto.Serie.Builder;
 
-import com.zombietank.bender.influx.SeriesTransformer;
+import com.zombietank.bender.influx.series.SeriesBuilder;
+import com.zombietank.bender.influx.series.SeriesTransformer;
 
 public class SigarTransformer implements SeriesTransformer<Sigar> {
 

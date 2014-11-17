@@ -4,6 +4,7 @@ import org.influxdb.InfluxDB;
 import org.influxdb.dto.Serie;
 
 import com.zombietank.bender.api.Repository;
+import com.zombietank.bender.influx.series.SeriesTransformer;
 
 public class InfluxDbRepo<T> implements Repository<T> {
 	private final String databaseName;

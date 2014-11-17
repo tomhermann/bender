@@ -23,13 +23,13 @@ public class Driver {
 	}
 	
 	void start() throws IOException {
-		ScheduledExecutorService newScheduledThreadPool = Executors.newScheduledThreadPool(1);
+		ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 		
 		InfluxDB influxDb = createConnection(loadProperties());
 		Repository<Sigar> repository = new InfluxDbRepo<>("sigar", influxDb, new SigarTransformer());
 		
 		Runnable task = new GatherSystemDataTask(new Sigar(), repository);
-		newScheduledThreadPool.scheduleWithFixedDelay(task, 0, 1, TimeUnit.SECONDS);
+		executor.scheduleWithFixedDelay(task, 0, 1, TimeUnit.SECONDS);
 	}
 
 	private InfluxDB createConnection(Properties properties) {

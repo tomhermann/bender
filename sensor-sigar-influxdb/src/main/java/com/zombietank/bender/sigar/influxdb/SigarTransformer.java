@@ -1,30 +1,32 @@
 package com.zombietank.bender.sigar.influxdb;
 
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.hyperic.sigar.Cpu;
+import org.hyperic.sigar.CpuPerc;
 import org.hyperic.sigar.Mem;
 import org.hyperic.sigar.ProcStat;
 import org.hyperic.sigar.Sigar;
 import org.hyperic.sigar.SigarException;
 import org.hyperic.sigar.Swap;
 import org.influxdb.dto.Serie;
+import org.influxdb.dto.Serie.Builder;
 
 import com.zombietank.bender.influx.SeriesTransformer;
 
 public class SigarTransformer implements SeriesTransformer<Sigar> {
 
+	private String hostname;
+
 	@Override
-	public Serie[] apply(Sigar input) {
+	public Serie[] apply(Sigar sigar) {
 		try {
-			return new Serie[] { 
-				toSeries(input.getCpu()),
-				toSeries(input.getMem()),
-				toSeries(input.getProcStat()),
-				toSeries(input.getSwap())
-			};
+			this.hostname = sigar.getNetInfo().getHostName();
+			return new Serie[] { cpu(sigar.getCpu()), mem(sigar.getMem()), procStat(sigar.getProcStat()), swap(sigar.getSwap()) };
 		} catch (SigarException e) {
-			// FIXME: If this fails it should log and continue. Need to set up logging, so this will do.
+			// FIXME: If this fails it should log and continue. Need to set up
+			// logging, so this will do.
 			throw new RuntimeException(e);
 		}
 	}
@@ -34,41 +36,36 @@ public class SigarTransformer implements SeriesTransformer<Sigar> {
 		return TimeUnit.MILLISECONDS;
 	}
 
-	private Serie toSeries(Cpu cpu) {
-		return new Serie.Builder("cpu")
-				.columns("idle", "irq", "nice", "softIrq", "stolen", "sys",
-						 "total", "user", "wait")
-				.values(cpu.getIdle(), cpu.getIrq(), cpu.getNice(),
-						cpu.getSoftIrq(), cpu.getStolen(), cpu.getSys(),
-						cpu.getTotal(), cpu.getUser(), cpu.getWait())
-				.build();
+	private Serie cpu(Cpu cpu) {
+		return seriesWithMeta("cpu")
+				.columns("idle", "irq", "nice", "softIrq", "stolen", "sys", "total", "user", "wait")
+				.values(cpu.getIdle(), cpu.getIrq(), cpu.getNice(), cpu.getSoftIrq(), cpu.getStolen(), cpu.getSys(),
+						cpu.getTotal(), cpu.getUser(), cpu.getWait()).build();
+
 	}
 
-	private Serie toSeries(Mem mem) {
-		return new Serie.Builder("mem")
-				.columns("actualFree", "actualUsed", "free", "freePercent",
-						 "ram", "total", "used", "usedPercent")
-				.values(mem.getActualFree(), mem.getActualUsed(),
-						mem.getFree(), mem.getFreePercent(), mem.getRam(),
-						mem.getTotal(), mem.getUsed(), mem.getUsedPercent())
-				.build();
+	private Serie mem(Mem mem) {
+		return seriesWithMeta("mem")
+				.columns("actualFree", "actualUsed", "free", "freePercent", "ram", "total", "used", "usedPercent")
+				.values(mem.getActualFree(), mem.getActualUsed(), mem.getFree(), mem.getFreePercent(), mem.getRam(),
+						mem.getTotal(), mem.getUsed(), mem.getUsedPercent()).build();
 	}
 
-	private Serie toSeries(ProcStat procStat) {
-		return new Serie.Builder("procStat")
-				.columns("idle", "running", "sleeping", "stopped", "threads",
-						"total", "zombie")
-				.values(procStat.getIdle(), procStat.getRunning(),
-						procStat.getSleeping(), procStat.getStopped(),
-						procStat.getThreads(), procStat.getTotal(),
-						procStat.getZombie()).build();
+	private Serie procStat(ProcStat stat) {
+		return seriesWithMeta("procStat")
+				.columns("idle", "running", "sleeping", "stopped", "threads", "total", "zombie")
+				.values(stat.getIdle(), stat.getRunning(), stat.getSleeping(), stat.getStopped(), stat.getThreads(),
+						stat.getTotal(), stat.getZombie()).build();
 	}
 
-	private Serie toSeries(Swap swap) {
-		return new Serie.Builder("swap")
-				.columns("free", "pageIn", "pageOut", "total", "used")
-				.values(swap.getFree(), swap.getPageIn(), swap.getPageOut(), 
-						swap.getTotal(), swap.getUsed())
-				.build();
+	private Serie swap(Swap swap) {
+		return seriesWithMeta("swap").columns("free", "pageIn", "pageOut", "total", "used")
+				.values(swap.getFree(), swap.getPageIn(), swap.getPageOut(), swap.getTotal(), swap.getUsed()).build();
+	}
+
+	private SeriesBuilder seriesWithMeta(String name) {
+		SeriesBuilder seriesBuilder = new SeriesBuilder(name);
+		seriesBuilder.addEntry("hostname", hostname);
+		return seriesBuilder;
 	}
 }

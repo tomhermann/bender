@@ -1,16 +1,20 @@
 allprojects {
-	apply from: 'https://raw.githubusercontent.com/tomhermann/gradle-scripts/master/create-dirs.gradle'
-    apply plugin: 'java'
-    apply plugin: 'eclipse'
-    apply plugin: 'idea'
+	apply plugin: 'java'
+	apply plugin: 'eclipse'
+	apply plugin: 'idea'
 
-    repositories {
-        jcenter()
-    }
+	repositories {
+		jcenter()
+	}
 
-    sourceCompatibility = '1.7'
-    targetCompatibility = sourceCompatibility
+	sourceCompatibility = '1.7'
+	targetCompatibility = sourceCompatibility
 }
+
+apply plugin: 'application'
+
+mainClassName='com.zombietank.bender.Driver'
+
 
 dependencies {
 	compile project(':sensor-sigar-influxdb')

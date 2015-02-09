@@ -1,10 +1,13 @@
 package com.zombietank.bender.sigar;
 
 import org.hyperic.sigar.Sigar;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.zombietank.bender.api.Repository;
 
 public class GatherSystemDataTask implements Runnable {
+	private static final Logger logger = LoggerFactory.getLogger(GatherSystemDataTask.class);
 	private final Sigar sigar;
 	private final Repository<Sigar> repository;
 
@@ -15,6 +18,7 @@ public class GatherSystemDataTask implements Runnable {
 
 	@Override
 	public void run() {
-		repository.store(sigar, Sigar.class);
+		logger.info("Gathering system information");
+		repository.store(sigar);
 	}
 }
